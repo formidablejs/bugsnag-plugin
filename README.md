@@ -47,7 +47,7 @@ export class Config < ConfigRepository
 		}
 ```
 
-And finally set your api key under the `.env` file:
+And finally set your api key in the `.env` file:
 
 ```env
 BUGSNAG_API_KEY=<your-api-key>
