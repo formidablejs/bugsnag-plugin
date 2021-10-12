@@ -2,6 +2,10 @@
 
 Bugsnag notifier for the Formidable framework (work in progress).
 
+![trace](https://raw.githubusercontent.com/formidablejs/bugsnag-plugin/main/stacktrace.png)
+
+![query](https://raw.githubusercontent.com/formidablejs/bugsnag-plugin/main/query.png)
+
 ## Requirements
 
  * [@formidablejs/craftsman](https://www.npmjs.com/package/@formidablejs/craftsman): `>=0.5.0-alpha.3`
