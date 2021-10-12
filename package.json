@@ -1,0 +1,40 @@
+{
+  "name": "@formidablejs/bugsnag-plugin",
+  "version": "0.0.1-alpha.1",
+  "description": "Bugsnag notifier for the Formidable framework.",
+  "author": "Donald Pakkies <donaldpakkies@gmail.com>",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "index.d.ts",
+  "publisher": "formidable/Package.js",
+  "bugs": "https://github.com/formidablejs/bugsnag-plugin/issues",
+  "homepage": "https://formidablejs.org",
+  "repository": "https://github.com/formidablejs/bugsnag-plugin",
+  "files": [
+    "formidable",
+    "lib",
+    "types",
+    "index.d.ts"
+  ],
+  "scripts": {
+    "build": "npm run imba:build && npm run imba:build:temp && npm run ts:build",
+    "imba:build": "imbac src --output=lib --platform=node --format=cjs --clean",
+    "imba:build:temp": "imbac src --output=.temp --platform=node --clean",
+    "imba:watch": "imbac -w src --output=lib --platform=node --clean",
+    "ts:build": "tsc",
+    "ts:watch": "tsc -w"
+  },
+  "peerDependencies": {
+    "@bugsnag/js": ">=7.11.0",
+    "@formidablejs/framework": ">=0.5.x"
+  },
+  "devDependencies": {
+    "@bugsnag/js": "^7.11.0",
+    "@formidablejs/framework": "^0.5.0-alpha.2",
+    "@formidablejs/mailer": "^0.2.0-alpha.1",
+    "@types/node": "^16.10.4",
+    "fastify": "^3.22.0",
+    "imba": "^2.0.0-alpha.175",
+    "typescript": "^4.4.4"
+  }
+}
