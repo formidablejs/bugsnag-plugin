@@ -1,5 +1,5 @@
 export default class BugsnagServiceResolver extends ServiceResolver {
-    get bugsnagConfig(): {
+    get config(): {
         apiKey: any;
         appType: any;
         appVersion: any;
