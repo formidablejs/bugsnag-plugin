@@ -5,7 +5,7 @@ import type { FastifyRequest, FormRequest } from '@formidablejs/framework'
 
 export default class BugsnagServiceResolver < ServiceResolver
 
-	get bugsnagConfig
+	get config
 		{
 			apiKey: self.app.config.get('bugsnag.api_key')
 			appType: self.app.config.get('bugsnag.app_type')
@@ -24,7 +24,7 @@ export default class BugsnagServiceResolver < ServiceResolver
 
 	def boot
 		if !(helpers.isEmpty(self.app.config.get('bugsnag.api_key')))
-			Bugsnag.start bugsnagConfig
+			Bugsnag.start config
 
 			self.catchQueries!
 
@@ -42,7 +42,17 @@ export default class BugsnagServiceResolver < ServiceResolver
 		self.app.addHook 'onRequest', do(request, reply, done)
 			if self.app.config.get('bugsnag.query', true) == true
 				Database.on 'query', do(data)
-					request._knex_data = data
+					if helpers.isEmpty(request._knex_data)
+						request._knex_data = [  ]
+
+					const today = new Date
+
+					const time = "{today.getHours!}:{today.getMinutes!}:{today.getSeconds!}:{today.getMilliseconds!} {today.getHours! >= 12 ? 'pm' : 'am'}"
+
+					request._knex_data.push {
+						time,
+						...data
+					}
 
 			done!
 
@@ -50,13 +60,20 @@ export default class BugsnagServiceResolver < ServiceResolver
 		const knexEvent = request.request._knex_data
 
 		if knexEvent
-			const queryTab = {
-				method: knexEvent.method
-				sql: knexEvent.sql
-			}
+			let queryTab = { }
 
-			if self.app.config.get('bugsnag.bindings', false) == true
-				queryTab.bindings = knexEvent.bindings
+			for query in knexEvent
+				const queryLog = {
+					[query.time]: {
+						method: query.method
+						sql: query.sql
+					}
+				}
+
+				if self.app.config.get('bugsnag.bindings', false) == true
+					queryLog.bindings = query.bindings
+
+				queryTab = { ...queryTab, ...queryLog }
 
 			event.addMetadata 'Query', queryTab
 
