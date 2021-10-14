@@ -1,4 +1,4 @@
-import { ServiceResolver, Database, helpers } from '@formidablejs/framework'
+import { ExceptionHandler, ServiceResolver, Database, helpers } from '@formidablejs/framework'
 import Bugsnag from '@bugsnag/js'
 import type { Event } from '@bugsnag/js'
 import type { FastifyRequest, FormRequest } from '@formidablejs/framework'
@@ -94,14 +94,15 @@ export default class BugsnagServiceResolver < ServiceResolver
 	def catchErrors
 		self.app.onResponse do(error, request\FormRequest)
 			if error instanceof Error
-				Bugsnag.notify error, do(event)
-					event.request = self.requestInformation(request)
+				if helpers.isFunction(self.app.handler) && self.app.handler.shouldReport(error)
+					Bugsnag.notify error, do(event)
+						event.request = self.requestInformation(request)
 
-					self.setUser request
+						self.setUser request
 
-					self.createQueryTab request, event
+						self.createQueryTab request, event
 
-					self.handleCallbacks event
+						self.handleCallbacks event
 
 			if request.request._knex_data
 				delete request.request._knex_event
