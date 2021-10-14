@@ -25,8 +25,8 @@
     "ts:watch": "tsc -w"
   },
   "peerDependencies": {
-    "@bugsnag/js": ">=7.11.0",
-    "@formidablejs/framework": ">=0.5.x"
+    "@bugsnag/js": "7.x",
+    "@formidablejs/framework": "0.x"
   },
   "devDependencies": {
     "@bugsnag/js": "^7.11.0",
