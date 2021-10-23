@@ -13,6 +13,7 @@ export default class BugsnagServiceResolver extends ServiceResolver {
         redactedKeys: any;
         releaseStage: any;
         sendCode: any;
+        logger: any;
     };
     catchQueries(): import("@formidablejs/framework").Application;
     /**
