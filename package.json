@@ -1,6 +1,6 @@
 {
   "name": "@formidablejs/bugsnag-plugin",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.2",
   "description": "Bugsnag notifier for the Formidable framework.",
   "author": "Donald Pakkies <donaldpakkies@gmail.com>",
   "license": "MIT",
@@ -25,7 +25,7 @@
   },
   "peerDependencies": {
     "@bugsnag/js": "7.x",
-    "@formidablejs/framework": "0.x.x.x"
+    "@formidablejs/framework": "0.x.x"
   },
   "devDependencies": {
     "@bugsnag/js": "^7.11.0",
