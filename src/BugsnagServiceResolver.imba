@@ -1,7 +1,10 @@
-import { ExceptionHandler, ServiceResolver, Database, helpers } from '@formidablejs/framework'
-import Bugsnag from '@bugsnag/js'
+import { Database } from '@formidablejs/framework'
+import { ExceptionHandler } from '@formidablejs/framework'
+import { helpers } from '@formidablejs/framework'
+import { ServiceResolver } from '@formidablejs/framework'
 import type { Event } from '@bugsnag/js'
 import type { FastifyRequest, FormRequest } from '@formidablejs/framework'
+import Bugsnag from '@bugsnag/js'
 
 export default class BugsnagServiceResolver < ServiceResolver
 
@@ -17,9 +20,14 @@ export default class BugsnagServiceResolver < ServiceResolver
 			}
 			hostname: self.app.config.get('bugsnag.hostname')
 			projectRoot: self.app.config.get('bugsnag.project_root')
-			redactedKeys: self.app.config.get('bugsnag.redacted_keys')
+			redactedKeys: self.app.config.get('bugsnag.redacted_keys', [
+				'password'
+				'cookie'
+				'authorization'
+			])
 			releaseStage: self.app.config.get('bugsnag.release_stage', self.app.config.get('app.env'))
-			sendCode: self.app.config.get('bugsnag.sendCode')
+			sendCode: self.app.config.get('bugsnag.sendCode', true)
+			logger: null
 		}
 
 	def boot
@@ -40,61 +48,71 @@ export default class BugsnagServiceResolver < ServiceResolver
 
 	def catchQueries
 		self.app.addHook 'onRequest', do(request, reply, done)
-			if self.app.config.get('bugsnag.query', true) == true
-				Database.on 'query', do(data)
-					if helpers.isEmpty(request._knex_data)
-						request._knex_data = [  ]
+			if self.app.config.get('bugsnag.query', true) !== true then return done!
 
-					const today = new Date
+			Database.on 'query', do(data)
+				if helpers.isEmpty(request._knex_data)
+					request._knex_data = [  ]
 
-					const time = "{today.getHours!}:{today.getMinutes!}:{today.getSeconds!}:{today.getMilliseconds!} {today.getHours! >= 12 ? 'pm' : 'am'}"
+				const today = new Date
 
-					request._knex_data.push {
-						time,
-						...data
-					}
+				const hh = today.getHours!
+				const mm = today.getMinutes!
+				const ss = today.getSeconds!
+				const ms = today.getMilliseconds!
+
+				const time = "{hh}:{mm}:{ss}:{ms} {hh >= 12 ? 'pm' : 'am'}"
+
+				request._knex_data.push {
+					time,
+					...data
+				}
 
 			done!
 
 	def createQueryTab request, event\Event
 		const knexEvent = request.request._knex_data
 
-		if knexEvent
-			let queryTab = { }
+		if !knexEvent then return
 
-			for query in knexEvent
-				const queryLog = {
-					[query.time]: {
-						method: query.method
-						sql: query.sql
-					}
+		let queryTab = { }
+
+		for query in knexEvent
+			const queryLog = {
+				[query.time]: {
+					method: query.method
+					sql: query.sql
 				}
+			}
 
-				if self.app.config.get('bugsnag.bindings', false) == true
-					queryLog.bindings = query.bindings
+			if self.app.config.get('bugsnag.bindings', false) == true
+				queryLog.bindings = query.bindings
 
-				queryTab = { ...queryTab, ...queryLog }
+			queryTab = { ...queryTab, ...queryLog }
 
-			event.addMetadata 'Query', queryTab
+		event.addMetadata 'Query', queryTab
 
 	def setUser request\FormRequest
-		if self.app.config.get('bugsnag.user', false) == true
-			const user = request.auth!.user!
+		if self.app.config.get('bugsnag.user', false) !== true then return
 
-			if user
-				event.addMetadata 'user', {
-					...helpers.without(user, self.app.config.get('auth.providers.jwt.hidden'))
-				}
+		const user = request.auth!.user!
+
+		if !user then return
+
+		event.addMetadata 'user', {
+			...helpers.without(user, self.app.config.get('auth.providers.jwt.hidden'))
+		}
 
 	def handleCallbacks event\Event
-		if self.app.config.get('bugsnag.callbacks', false) == true
-			for callback in Bugsnag._registered_callbacks
-				callback event
+		if self.app.config.get('bugsnag.callbacks', false) !== true then return
+
+		for callback in Bugsnag._registered_callbacks
+			callback event
 
 	def catchErrors
 		self.app.onResponse do(error, request\FormRequest)
 			if error instanceof Error
-				if helpers.isFunction(self.app.handler) && self.app.handler.shouldReport(error)
+				if !helpers.isEmpty(self.app.handler) && self.app.handler.shouldReport(error)
 					Bugsnag.notify error, do(event)
 						event.request = self.requestInformation(request)
 
@@ -103,6 +121,12 @@ export default class BugsnagServiceResolver < ServiceResolver
 						self.createQueryTab request, event
 
 						self.handleCallbacks event
+
+						event.severity = 'error'
+
+						event.unhandled = false
+
+						event
 
 			if request.request._knex_data
 				delete request.request._knex_event
