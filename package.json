@@ -5,7 +5,7 @@
   "author": "Donald Pakkies <donaldpakkies@gmail.com>",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "index.d.ts",
+  "types": "types/index.d.ts",
   "publisher": "formidable/Package.js",
   "bugs": "https://github.com/formidablejs/bugsnag-plugin/issues",
   "homepage": "https://formidablejs.org",
@@ -13,8 +13,7 @@
   "files": [
     "formidable",
     "lib",
-    "types",
-    "index.d.ts"
+    "types"
   ],
   "scripts": {
     "build": "npm run imba:build && npm run imba:build:temp && npm run ts:build",
@@ -26,14 +25,14 @@
   },
   "peerDependencies": {
     "@bugsnag/js": "7.x",
-    "@formidablejs/framework": "0.x"
+    "@formidablejs/framework": "0.x.x.x"
   },
   "devDependencies": {
     "@bugsnag/js": "^7.11.0",
-    "@formidablejs/framework": "^0.5.0-alpha.2",
+    "@formidablejs/framework": "^0.6.2-alpha.1",
     "@formidablejs/mailer": "^0.2.0-alpha.1",
-    "@types/node": "^16.10.4",
-    "fastify": "^3.22.0",
+    "@types/node": "^16.11.4",
+    "fastify": "^3.22.1",
     "imba": "^2.0.0-alpha.175",
     "typescript": "^4.4.4"
   }
