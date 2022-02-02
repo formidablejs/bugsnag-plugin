@@ -23,7 +23,7 @@ export default class BugsnagServiceResolver extends ServiceResolver {
     /**
     @param {FormRequest} request
     */
-    setUser(request: any): any;
+    setUser(request: FormRequest): any;
     /**
     @param {Event} event
     */
@@ -32,7 +32,7 @@ export default class BugsnagServiceResolver extends ServiceResolver {
     /**
     @param {FormRequest} request
     */
-    requestInformation(request: any): {
+    requestInformation(request: FormRequest): {
         url: string;
         path: any;
         httpMethod: any;
@@ -44,3 +44,4 @@ export default class BugsnagServiceResolver extends ServiceResolver {
     };
 }
 import { ServiceResolver } from "@formidablejs/framework";
+import type { FormRequest } from '@formidablejs/framework';
