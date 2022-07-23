@@ -15,6 +15,7 @@ export default class BugsnagServiceResolver extends ServiceResolver {
         sendCode: any;
         logger: any;
     };
+    boot(): BugsnagServiceResolver;
     catchQueries(): import("@formidablejs/framework").Application;
     /**
     @param {Event} event
@@ -44,4 +45,3 @@ export default class BugsnagServiceResolver extends ServiceResolver {
     };
 }
 import { ServiceResolver } from "@formidablejs/framework";
-import type { FormRequest } from '@formidablejs/framework';
