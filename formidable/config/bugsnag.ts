@@ -1,4 +1,4 @@
-import { helpers } from '@formidablejs/framework';
+import { helpers } from '@formidablejs/framework'
 
 export default {
 
@@ -122,7 +122,7 @@ export default {
 	callbacks: helpers.env('BUGSNAG_CALLBACKS', true),
 
 	/**
-	 *  --------------------------------------------------------------------------
+	 * --------------------------------------------------------------------------
 	 * Release Stage
 	 * --------------------------------------------------------------------------
 	 *
