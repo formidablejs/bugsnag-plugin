@@ -66,7 +66,7 @@ export default {
 	 * Bugsnag marks stacktrace lines as in-project if they come from files
 	 * inside your “project root”. You can set this here.
 	 *
-	 * If this is not set, we will automatically try to detect it.
+	 * If this is not set, Bugsnag will try to detect it.
 	 */
 
 	project_root: helpers.env('BUGSNAG_PROJECT_ROOT'),
@@ -76,7 +76,7 @@ export default {
 	 * Query
 	 * --------------------------------------------------------------------------
 	 *
-	 * Enable this if you'd like us to automatically record all queries executed
+	 * Enable this if you'd like to automatically record all queries executed
 	 * under the "QUERY" tab.
 	 */
 
@@ -87,7 +87,7 @@ export default {
 	 * Bindings
 	 * --------------------------------------------------------------------------
 	 *
-	 * Enable this if you'd like us to include the query bindings in our "QUERY"
+	 * Enable this if you'd like to include the query bindings in our "QUERY"
 	 * tab.
 	 */
 
@@ -110,7 +110,7 @@ export default {
 	 * Callbacks
 	 * --------------------------------------------------------------------------
 	 *
-	 * Enable this if you'd like us to enable our default set of notification
+	 * Enable this if you'd like to enable Bugsnags default set of notification
 	 * callbacks. These add things like the cookie information and session
 	 * details to the error to be sent to Bugsnag.
 	 *
@@ -148,7 +148,7 @@ export default {
 	 * User
 	 * --------------------------------------------------------------------------
 	 *
-	 * Enable this if you'd like us to set the current user logged in via
+	 * Enable this if you'd like to set the current user logged in via
 	 * Formidable's authentication system.
 	 */
 
