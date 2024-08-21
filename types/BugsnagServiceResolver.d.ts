@@ -21,10 +21,7 @@ export default class BugsnagServiceResolver extends ServiceResolver {
     @param {Event} event
     */
     createQueryTab(request: any, event: Event): any;
-    /**
-    @param {FormRequest} request
-    */
-    setUser(request: FormRequest): any;
+    setUser(user: any, event: any): any;
     /**
     @param {Event} event
     */
