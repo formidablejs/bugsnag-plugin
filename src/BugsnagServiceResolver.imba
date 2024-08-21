@@ -2,6 +2,7 @@ import { Database } from '@formidablejs/framework'
 import { ExceptionHandler } from '@formidablejs/framework'
 import { helpers } from '@formidablejs/framework'
 import { ServiceResolver } from '@formidablejs/framework'
+import { Auth } from './Auth'
 import type { Event } from '@bugsnag/js'
 import type { FastifyRequest, FormRequest } from '@formidablejs/framework'
 import Bugsnag from '@bugsnag/js'
@@ -61,7 +62,10 @@ export default class BugsnagServiceResolver < ServiceResolver
 				const ss = today.getSeconds!
 				const ms = today.getMilliseconds!
 
-				const time = "{hh}:{mm}:{ss}:{ms} {hh >= 12 ? 'pm' : 'am'}"
+				def padZero time
+					time < 10 ? '0' + time : '' + time;
+
+				const time = "{hh}:{mm}:{ss}:{padZero(ms / 10 | 0)} {hh >= 12 ? 'pm' : 'am'}"
 
 				request._knex_data.push {
 					time,
@@ -92,12 +96,32 @@ export default class BugsnagServiceResolver < ServiceResolver
 
 		event.addMetadata 'Query', queryTab
 
-	def setUser request\FormRequest
+	def setUser user, event
 		if self.app.config.get('bugsnag.user', false) !== true then return
 
-		const user = request.auth!.user!
-
 		if !user then return
+
+		const userObject = {}
+
+		if user.uuid
+			userObject.id = user.uuid
+
+		if user.id
+			userObject.id = user.id
+
+		if user.name
+			userObject.name = user.name
+
+		if user.first_name && user.last_name
+			userObject.name = "{user.first_name} {user.last_name}"
+
+		if user.email
+			userObject.email = user.email
+
+		if user.email_address
+			userObject.email = user.email_address
+
+		try event.setUser(user.id ?? '', user.email ?? '', user.name ?? '')
 
 		event.addMetadata 'user', {
 			...helpers.without(user, self.app.config.get('auth.providers.jwt.hidden'))
@@ -113,10 +137,18 @@ export default class BugsnagServiceResolver < ServiceResolver
 		self.app.onResponse do(error, request\FormRequest)
 			if error instanceof Error
 				if !helpers.isEmpty(self.app.handler) && self.app.handler.shouldReport(error)
+
+					let user = null
+
+					if self.app.config.get('bugsnag.user', false) === true
+						user = request.auth().user()
+
+						try if !user then user = await (new Auth).get(request)
+
 					Bugsnag.notify error, do(event)
 						event.request = self.requestInformation(request)
 
-						self.setUser request
+						self.setUser user, event
 
 						self.createQueryTab request, event
 
