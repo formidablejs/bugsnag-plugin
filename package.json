@@ -28,9 +28,9 @@
     "@formidablejs/framework": "0.x.x"
   },
   "devDependencies": {
-    "@bugsnag/js": "^7.17.0",
-    "@formidablejs/framework": "^0.11.10",
-    "@formidablejs/mailer": "^0.3.1",
+    "@bugsnag/js": "^7.25.0",
+    "@formidablejs/framework": "^0.27.1",
+    "@formidablejs/mailer": "^0.4.2",
     "@types/node": "^18.0.6",
     "fastify": "^4.3.0",
     "imba": "^2.0.0-alpha.212",
