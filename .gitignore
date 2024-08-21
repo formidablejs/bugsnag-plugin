@@ -1,6 +1,7 @@
 /node_modules
 /public
 /.temp
+/lib
 .env
 .env.backup
 npm-debug.log
